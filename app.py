@@ -20,7 +20,7 @@ def load_chain():
         embedding_function=embeddings
     )
 
-    llm = InternLM_LLM(model_path = "./model/internlm-chat-7b")
+    llm = InternLM_LLM(model_path = "./model/Shanghai_AI_Laboratory/internlm-chat-7b")
 
     template = """使用以下上下文来回答最后的问题。如果你不知道答案，就说你不知道，不要试图编造答
     案。尽量使答案简明扼要。总是在回答的最后说“谢谢你的提问！”。
@@ -61,6 +61,19 @@ class Model_center():
         except Exception as e:
             return e, chat_history
 
+# 模型下载
+if not os.path.exists("./model/sentence-transformer"):
+    import os
+    # 设置环境变量
+    os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
+    # 下载模型
+    os.system('huggingface-cli download --resume-download sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 --local-dir ./model/sentence-transformer')
+
+if not os.path.exists("./model/Shanghai_AI_Laboratory/internlm-chat-7b"):
+    import torch
+    from modelscope import snapshot_download, AutoModel, AutoTokenizer
+    import os
+    model_dir = snapshot_download('Shanghai_AI_Laboratory/internlm-chat-7b', cache_dir='./model', revision='v1.0.3')
 
 model_center = Model_center()
 
